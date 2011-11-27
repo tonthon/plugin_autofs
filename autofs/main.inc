@@ -3,29 +3,29 @@
  * Autofs plugin
  */
 /* Remove locks created by this plugin.
- * 
+ *
  */
 if ( $remove_lock ){
   if ( session::is_set('autofs') ){
-    // If necessary  : unlock 
+    // If necessary  : unlock
   }
 }
 if ( $cleanup ) {
-  session::unset('autofs');
+  session::un_set('autofs');
 } else {
   if ( !session::is_set('autofs') ) {
-    session::set('autofs', new autofs($config, null));
+    session::set('autofs', new autofs($config, $dn));
   }
   $autofs = session::get('autofs');
   /*
    * Usefull if the plugin provides an input field
    */
-  //  $display= $dummyplug->save_object();
-  
-  /* 
+  //  $display= $autofs->save_object();
+
+  /*
    * Rendered datas are put in the display var
    */
-  $display= $dummyplug->execute ();
+  $display= $autofs->execute ();
 
   /*
    * Page header generation
@@ -37,5 +37,3 @@ if ( $cleanup ) {
    */
   session::set('autofs', $autofs);
 }
-
-?>

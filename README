@@ -1,2 +1,27 @@
 Plugin Autofs-nfs for fusiondirectory
 =====================================
+
+This plugin requires the following ldap schema :
+<pre>
+attributetype ( 1.3.6.1.1.1.1.26 NAME 'nisMapName'
+SUP name )
+
+attributetype ( 1.3.6.1.1.1.1.27 NAME 'nisMapEntry'
+EQUALITY caseExactIA5Match
+SUBSTR caseExactIA5SubstringsMatch
+SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{1024} SINGLE-VALUE )
+
+objectclass ( 1.3.6.1.1.1.2.9 NAME 'nisMap'
+DESC 'A generic abstraction of a NIS map'
+SUP top STRUCTURAL
+MUST nisMapName
+MAY description )
+
+objectclass ( 1.3.6.1.1.1.2.10 NAME 'nisObject'
+DESC 'An entry in a NIS map'
+SUP top STRUCTURAL
+MUST ( cn $ nisMapEntry $ nisMapName )
+MAY description )
+</pre>
+
+This one is available in the <b>rfc2307bis.schema</b>.
