@@ -7,9 +7,12 @@
 class mPoint extends plugin {
   /*
    * Mountpoint object:
+   * @point: the mountpoint (under the auto.master branch)
+   * 
+   * This datas are stored under a auto.... specific branch 
+   * and are parsed from the nisMapEntry associated with them
    * @server: the nfs' server address
    * @rep: the rep to mount
-   * @point: the mountpoint
    * @options: mount options
    */
   var $server;
@@ -17,17 +20,18 @@ class mPoint extends plugin {
   var $point;
   var $options;
 
-/*  public function __construct( $server, $rep, $point, $options){
-    $this->server = $server;
-    $this->rep = $rep;
-    $this->point = $point;
-    $this->options = $options;
-}*/
-  public function __construct( $point, $nisMapEntry, $ldap ) {
+  public function __construct( $ldapentry, $ldap ) {
+    $this->point = $ldapentry['cn'][0];
+    $nisMapEntry  = $ldapentry['nisMapEntry'][0];
+
     $this->point = $point;
     $this->getMappedRep( $nisMapEntry, $ldap );
   }
-  public function getMappedRep( $nisMapEntry, $ldap ){
+
+  public function getMappedRep( $nisMapEntry, $ldap ) {
+    /*
+     * Get the mapped rep associated to the mount point 
+     */    
     $ldap->search("(&(objectClass=nisObject)(nisMapName=$nisMapEntry))");
     while ( $ldapentry = $ldap->fetch() ){
       $nfsCommand = $ldapentry['nisMapEntry'][0];
@@ -59,8 +63,6 @@ class autofs extends plugin{
   var $description = "This plugin provides a ldap map for nfs-autofs
     integration";
 
-  var $ipNfsServer = "192.168.2.50";
-
   public function __construct ( &$config, $dn = null ) {
     /*
      * Constructor
@@ -73,18 +75,23 @@ class autofs extends plugin{
 
     $this->mountPoints = array();
 
-    $ldap= $this->config->get_ldap_link();
-    $ldap->cd( $this->getOu() );
+    $this->ldap= $this->config->get_ldap_link();
+    $this->ldap->cd( $this->_getOu() );
+  }
+  private function retrieveMountPoints( ){
+    /*
+     * Retrieves all configured mountpoints 
+     */
     $ldap->search("(&(objectClass=nisObject)(nisMapName=auto.master))");
     while ($ldapentry = $ldap->fetch()){
-      $mountPoint = new mPoint( $ldapentry['cn'][0], $ldapentry['nisMapEntry'][0], 
-                                                                $ldap);
+      $mountPoint = new mPoint( $ldapentry, $this->ldap);       
       $this->mountPoints[] = $mountPoint;
     }
-
-
   }
-  public function getOu( ) {
+  private function _getOu( ) {
+    /*
+     * Returns the Ou for the autofs specific branch 
+     */
     return('ou=autofs,' . $this->config->current['BASE']);
   }
   public function execute () {
@@ -99,7 +106,13 @@ class autofs extends plugin{
   }
 
   public function getDefaultMountOpts () {
+    /*
+     * Returns the default options used while configuring a new mount point
+     */ 
     return "-fstype=nfs,rw,soft,async ". $this->ipNfsServer . ":";
+  }
+  public function save ( ) {
+
   }
 }
 ?>
