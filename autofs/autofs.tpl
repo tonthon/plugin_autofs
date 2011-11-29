@@ -1,31 +1,41 @@
-{debug}
+<style>
+{literal} 
+.mountrep{
+    padding:5px;
+    margin:5px;
+    border:1px solid #555;
+    display:inline-block;
+}
+.mpoint{
+    border-bottom:1px solid #666;
+    padding:5px;
+}
+{/literal} 
+</style>
 <h2>{t}NFS Drive Configuration{/t}</h2>
 <p>
-{t}Liste des montages configurés{/t}
+{t}Configured Mountpoints{/t}
 </p>
-<table>
-<thead>
-<tr>
-<th>Adresse Ip du serveur NFS</th>
-<th>Répertoire à monter</th>
-<th>Point de montage</th>
-<th>Option de montage</th>
-</tr>
-</thead>
-<tbody>
 {section name=mountlist loop=$mountPoints}
 {assign var=mountpoint value=$mountPoints[mountlist]}
-<tr>
-<td>{$mountpoint->server}</td>
-<td>{$mountpoint->rep}</td>
-<td>{$mountpoint->point}</td>
-<td>{$mountpoint->options}</td>
-</tr>
+<div class='mpoint'>
+<h2>{$mountpoint->name} ( {$mountpoint->point} )</h2>
+<input class="center" type="image" style="padding:1px" name="autofs_mpoint_rm_{$mountpoint->name}" title="Remove mountpoint" src="images/lists/trash.png">
+<br />
+{section name=replist loop=$mountpoint->mreps}
+{assign var=mountrep value=$mountpoint->mreps[replist]}
+<span class='mountrep'>
+<b>Chemin à monter : </b>{$mountrep->path}  <br /><br />
+<b>Server : </b>{$mountrep->server}<br />
+<b>Remote rep : </b>{$mountrep->remote_path}<br />
+<b>Mount options : </b>{$mountrep->options}<br />
+</span>
 {/section}
-</tbody>
-
-</table>
-
-<p class="plugbottom">
-&nbsp;
-</p>
+</div>
+<input type='submit' name='autofs_edit_form_mpoint_{$mountpoint->name}' value='Edit' />
+<input type='submit' name='autofs_del_mpoint_{$mountpoint->name}' value='Remove' />
+{/section}
+<input type='submit' name='autofs_add_form_mpoint' value='Add a new mountpoint' />
+<div>
+{$message}
+</div>
