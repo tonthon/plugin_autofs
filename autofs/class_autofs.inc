@@ -50,47 +50,47 @@ class autofs extends plugin{
     $this->action = new StateMachine( );
     if ( isset( $_POST['_autofs_add_form_mpoint_posted'] ) ){
       $this->action->setAction( 'add_mpoint' );
-      $name = get_post('autofs_mountname');
+      $name = trim(get_post('autofs_mountname'));
       if ( $this->_getPointFromName( $name ) == null){
-        $point = get_post('autofs_mountpoint');
+        $point = trim(get_post('autofs_mountpoint'));
         $nisMapEntry = 'auto.' . $name;
 
         $this->newMountPoint = new mountPoint($point,
           $nisMapEntry,
-          $this->config, 
+          $this->config,
           $this->_getOu()
         );
       }
     } elseif (isset($_POST['_autofs_del_mpoint_posted'] ) ){
       $this->action->setAction( 'del_mpoint' );
-      $name = "auto." . get_post('autofs_mountname');
+      $name = "auto." . trim(get_post('autofs_mountname'));
       $point = $this->_getPointFromName($name);
       if ( $point != null ) {
-      $this->rmMountPoint = new mountPoint($point, 
+      $this->rmMountPoint = new mountPoint($point,
                                            $name,
-                                           $this->config, 
+                                           $this->config,
                                            $this->_getOu()
                                          );
       }
     } elseif ( isset( $_POST['_autofs_edit_form_mpoint_posted'] ) ){
       $this->action->setAction( 'edit_mpoint' );
-      $name = "auto." . get_post( 'autofs_mountname' );
+      $name = "auto." . trim(get_post( 'autofs_mountname' ));
       $point = $this->_getPointFromName( $name );
-      $newPoint = get_post( 'autofs_mountpoint' );
+      $newPoint = trim(get_post( 'autofs_mountpoint' ));
       if ( ( $point != $newPoint )&&( $newPoint != '' )){
         $this->newPoint = $newPoint;
-        $this->editMountPoint = new mountPoint($point, 
+        $this->editMountPoint = new mountPoint($point,
           $name,
-          $this->config, 
+          $this->config,
           $this->_getOu());
       }
     } elseif (  isset(  $_POST['_autofs_add_form_rep_posted'])){
       $this->action->setAction( 'add_rep' );
-      $mapName = "auto." . get_post( 'autofs_mapname' );
-      $path = get_post(  'autofs_rep_path' );
-      $server = get_post( 'autofs_rep_server' );
-      $remote_path = get_post( 'autofs_rep_remote_path' );
-      $options = get_post( 'autofs_rep_options' );
+      $mapName = "auto." . trim(get_post( 'autofs_mapname' ));
+      $path = trim(get_post( 'autofs_rep_path' ));
+      $server = trim(get_post( 'autofs_rep_server' ));
+      $remote_path = trim(get_post( 'autofs_rep_remote_path' ));
+      $options = trim(get_post( 'autofs_rep_options' ));
       $this->action->message( "Map name : $mapName" );
       foreach ( $_POST as $key=>$item ){
         $this->action->message(  $key."->".$item);
@@ -105,8 +105,8 @@ class autofs extends plugin{
                               );
     }elseif ( isset( $_POST['_autofs_del_form_rep_posted'])){
       $this->action->setAction( 'del_rep' );
-      $mapName = "auto." . get_post( 'autofs_mapname' );
-      $path = get_post( 'autofs_rep_path' );
+      $mapName = "auto." . trim(get_post( 'autofs_mapname' ));
+      $path = trim(get_post( 'autofs_rep_path' ));
       $server = "";
       $remote_path = "";
       $options = "";
@@ -123,19 +123,19 @@ class autofs extends plugin{
                               );
     }elseif (  isset(  $_POST['_autofs_edit_form_rep_posted'] ) ){
       $this->action->setAction(  'edit_rep' );
-      $mapName = get_post(  'autofs_mapname' );
-      $origPath = get_post(  'autofs_orig_rep_path' );
-      $path = get_post(  'autofs_rep_path' );
-      $server = get_post( 'autofs_rep_server');
-      $remote_path = get_post( 'autofs_rep_remote_path');
-      $options = get_post(  'autofs_rep_options');
+      $mapName = trim(get_post(  'autofs_mapname' ));
+      $origPath = trim(get_post(  'autofs_orig_rep_path' ));
+      $path = trim(get_post(  'autofs_rep_path' ));
+      $server = trim(get_post( 'autofs_rep_server'));
+      $remote_path = trim(get_post( 'autofs_rep_remote_path'));
+      $options = trim(get_post(  'autofs_rep_options'));
 
-      $this->editRep = new mRep( $origPath, 
-                          "", 
-                          "", 
-                          "", 
-                          $this->config, 
-                          $this->_getOu(  ), 
+      $this->editRep = new mRep( $origPath,
+                          "",
+                          "",
+                          "",
+                          $this->config,
+                          $this->_getOu(  ),
                           $mapName);
       $this->newRepInfos = array( $path, $server, $remote_path, $options );
       $this->action->message( $origPath . "=>" . $path);
@@ -206,7 +206,7 @@ class autofs extends plugin{
 
   protected function retrieveMountPoints( ){
     /*
-     * Retrieves all configured mountpoints 
+     * Retrieves all configured mountpoints
      */
     $this->mountPoints = array();
     $ldap = $this->config->get_ldap_link();
@@ -214,15 +214,15 @@ class autofs extends plugin{
     $ldap->search("(&(objectClass=nisObject)(nisMapName=auto.master))");
     while ($ldapentry = $ldap->fetch()){
       $mPoint = new mountPoint( $ldapentry['cn'][0],
-        $ldapentry['nisMapEntry'][0], 
-        $this->config);       
+        $ldapentry['nisMapEntry'][0],
+        $this->config);
       $this->mountPoints[] = $mPoint;
     }
   }
 
   protected function _getOu( ) {
     /*
-     * Returns the Ou for the autofs specific branch 
+     * Returns the Ou for the autofs specific branch
      */
     return('ou=autofs,' . $this->config->current['BASE']);
   }
@@ -230,7 +230,7 @@ class autofs extends plugin{
   static function _getDefaultMountOpts () {
     /*
      * Returns the default options used while configuring a new mount point
-     */ 
+     */
     return "-fstype=nfs,rw,soft,async ";
   }
 
@@ -257,7 +257,7 @@ class autofs extends plugin{
     foreach ($_POST as $key=>$value){
       if (substr($key, 0, 24) == 'autofs_edit_form_mpoint_'){
         return substr($key, 24);
-      } 
+      }
     }
     return null;
   }
@@ -276,7 +276,7 @@ class autofs extends plugin{
 
   protected static function isAddFormRep( ){
     /*
-     * Return the name of the mountpoint 
+     * Return the name of the mountpoint
      * if we want to add a rep to it
      */
     foreach ( $_POST as $key=>$value){
@@ -289,14 +289,14 @@ class autofs extends plugin{
 
   protected function isDelFormRep( ){
     /*
-     * Return the name of the directory to delete 
+     * Return the name of the directory to delete
      * and the mapname it belongs to
      */
     foreach (  $_POST as $key=>$value){
       if (  substr( $key, 0, 16 ) == 'autofs_del_mrep_') {
         // The key appears as follow : autofs_del_mrep_<mapname>___<dirname>
         $datas = substr( $key, 16 );
-        list( $mapName, $path ) = explode( '___', $datas, 2 ); 
+        list( $mapName, $path ) = explode( '___', $datas, 2 );
         return array( $mapName, $path );
       }
     }
@@ -305,7 +305,7 @@ class autofs extends plugin{
 
   protected function isEditFormRep( ){
     /*
-     * Return the rep object to edit 
+     * Return the rep object to edit
      * and the mapname it belongs to
      */
     foreach ( $_POST as $key=>$value ){
@@ -313,7 +313,7 @@ class autofs extends plugin{
         $datas = substr( $key, 17);
         list( $mapName, $path) = explode( '___', $datas, 2 );
         $mapName = 'auto.' . $mapName;
-        $rep = new mRep( $path, '', '', '', 
+        $rep = new mRep( $path, '', '', '',
                         $this->config, $this->_getOu( ), $mapName);
         $rep->fetch( );
         $this->action->message( "Retrieving datas");
@@ -398,22 +398,22 @@ class autofs extends plugin{
   #    if ( isset($this->newMountPoint) ){
   #      if ( !$this->validMountPointName($this->newMountPoint['name']) ){
   #        $message = msgPool::invalid(sprintf(
-  #                                           _("Invalid mount point name %s"), 
+  #                                           _("Invalid mount point name %s"),
   #                                           ($this->newMountPoint['name'])
-  #                                           ), 
-  #                                   "", 
-  #                                   "", 
+  #                                           ),
+  #                                   "",
+  #                                   "",
   #                                   "Only A-Z and a-z characters are allowed" );
   #      } elseif ( !$this->validPath($this->newMountPoint['point'])){
   #        $message = msgPool::invalid(sprintf(
   #                                            _("Invalid mount path %s"),
   #                                            ($this->newMountPoint['point'])
   #                                          ),
-  #                                   "",    
-  #                                   "",    
+  #                                   "",
+  #                                   "",
   #                                   "/mnt/dummypath");
   #      }
-  #    } 
+  #    }
   #    return $message;
   #  }
   #  static function validMountPointName( $mpname ){
