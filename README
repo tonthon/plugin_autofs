@@ -25,3 +25,5 @@ MAY description )
 </pre>
 
 This one is available in the <b>rfc2307bis.schema</b>.
+
+Note : Only indirect mount could be configured.
