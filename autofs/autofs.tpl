@@ -1,5 +1,5 @@
 <style>
-{literal} 
+{literal}
 .mountrep{
     padding:5px;
     margin:5px;
@@ -9,8 +9,14 @@
 .mpoint{
     border-bottom:1px solid #666;
     padding:5px;
+    display: inline;
+    margin:5px;
+    -moz-box-shadow: 5px 5px 5px #ccc;
+    -webkit-box-shadow: 5px 5px 5px #ccc;
+    box-shadow: 5px 5px 5px #ccc;
+
 }
-{/literal} 
+{/literal}
 </style>
 <h2>{t}NFS Drive Configuration{/t}</h2>
 <p>
