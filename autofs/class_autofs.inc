@@ -235,9 +235,8 @@ class autofs extends plugin{
     $ldap->cd( $this->_getOu() );
     $ldap->search("(&(objectClass=nisObject)(nisMapName=auto.master))");
     while ($ldapentry = $ldap->fetch()){
-      $mPoint = new mountPoint( $ldapentry['cn'][0],
-        $ldapentry['nisMapEntry'][0],
-        $this->config);
+      $mPoint = $this->_get_mpoint( $ldapentry['cn'][0], 
+                                    $ldapentry['nisMapEntry'][0] );
       $this->mountPoints[] = $mPoint;
     }
   }
