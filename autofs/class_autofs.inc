@@ -97,18 +97,22 @@ class autofs extends plugin{
     }
   }
 
+  protected function _get_mpoint($point, $name){
+     return new mountPoint($point,
+			  $name,
+			  $this->config,
+			  $this->_getOu()
+			  );
+
+  }
+
   protected function _add_mpoint(){
       $this->action->setAction( 'add_mpoint' );
       $name = trim(get_post('autofs_mountname'));
       if ( $this->_getPointFromName( $name ) == null){
         $point = trim(get_post('autofs_mountpoint'));
         $nisMapEntry = 'auto.' . $name;
-
-        $this->newMountPoint = new mountPoint($point,
-          $nisMapEntry,
-          $this->config,
-          $this->_getOu()
-        );
+        $this->newMountPoint = this->_get_mpoint($point, $nisMapEntry);
       }
   }
 
@@ -117,11 +121,7 @@ class autofs extends plugin{
       $name = "auto." . trim(get_post('autofs_mountname'));
       $point = $this->_getPointFromName($name);
       if ( $point != null ) {
-      $this->rmMountPoint = new mountPoint($point,
-                                           $name,
-                                           $this->config,
-                                           $this->_getOu()
-                                         );
+      $this->rmMountPoint = this->_get_mpoint($point, $name);
       }
   }
 
@@ -132,10 +132,7 @@ class autofs extends plugin{
       $newPoint = trim(get_post( 'autofs_mountpoint' ));
       if ( ( $point != $newPoint )&&( $newPoint != '' )){
         $this->newPoint = $newPoint;
-        $this->editMountPoint = new mountPoint($point,
-          $name,
-          $this->config,
-          $this->_getOu());
+        $this->editMountPoint = this->_get_mpoint($point, $name);
       }
   }
 
