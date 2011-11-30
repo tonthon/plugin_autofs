@@ -1,6 +1,11 @@
 Plugin Autofs-nfs for fusiondirectory
 =====================================
 
+This plugin has been tested with Openldap 2.4.23
+
+Install and requisites
+----------------------
+
 This plugin requires the following ldap schema::
 
         attributetype ( 1.3.6.1.1.1.1.26 NAME 'nisMapName'
@@ -26,9 +31,18 @@ This plugin requires the following ldap schema::
 
 It is available in the `rfc2307bis.schema <http://tools.ietf.org/id/draft-howard-rfc2307bis-00.txt>`_
 
-This plugin has been tested with Openldap 2.4.23
+TODO: say how to install.
 
-LIMITATIONS
+
+How to proceed
+--------------
+
+#. Add the schema to your ldap server instance.
+#. Configure an NFS server with some exports.
+#. Open fusiondirectory, tell this plugin about the mount points.
+#. Configure your autofs clients to look for information on the LDAP server.
+
+Limitations
 -----------
 
 Only indirect mount could be configured.
