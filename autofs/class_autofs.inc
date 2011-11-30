@@ -106,6 +106,17 @@ class autofs extends plugin{
 
   }
 
+  protected function _get_mrep($path, $server, $remote_path, $options, $mapName){
+     return new mRep( $path,
+                               $server,
+                               $remote_path,
+                               $options,
+                               $this->config,
+                               $this->_getOu( ),
+                               $mapName
+                              );
+  }
+
   protected function _add_mpoint(){
       $this->action->setAction( 'add_mpoint' );
       $name = trim(get_post('autofs_mountname'));
@@ -147,12 +158,10 @@ class autofs extends plugin{
       foreach ( $_POST as $key=>$item ){
         $this->action->message(  $key."->".$item);
       }
-      $this->newRep = new mRep( $path,
+      $this->newRep = $this->_get_mrep($path,
                                $server,
                                $remote_path,
                                $options,
-                               $this->config,
-                               $this->_getOu( ),
                                $mapName
                               );
   }
@@ -167,12 +176,10 @@ class autofs extends plugin{
       foreach (  $_POST as $key=>$item ){
         $this->action->message(   $key."->".$item);
       }
-      $this->delRep = new mRep( $path,
+      $this->delRep = $this->_get_mrep( $path,
                                $server,
                                $remote_path,
                                $options,
-                               $this->config,
-                               $this->_getOu( ),
                                $mapName
                               );
   }
@@ -186,13 +193,7 @@ class autofs extends plugin{
       $remote_path = trim(get_post( 'autofs_rep_remote_path'));
       $options = trim(get_post(  'autofs_rep_options'));
 
-      $this->editRep = new mRep( $origPath,
-                          "",
-                          "",
-                          "",
-                          $this->config,
-                          $this->_getOu(  ),
-                          $mapName);
+      $this->editRep = $this->_get_mrep( $origPath, "", "", "", $mapName);
       $this->newRepInfos = array( $path, $server, $remote_path, $options );
       $this->action->message( $origPath . "=>" . $path);
   }
@@ -235,7 +236,7 @@ class autofs extends plugin{
     $ldap->cd( $this->_getOu() );
     $ldap->search("(&(objectClass=nisObject)(nisMapName=auto.master))");
     while ($ldapentry = $ldap->fetch()){
-      $mPoint = $this->_get_mpoint( $ldapentry['cn'][0], 
+      $mPoint = $this->_get_mpoint( $ldapentry['cn'][0],
                                     $ldapentry['nisMapEntry'][0] );
       $this->mountPoints[] = $mPoint;
     }
@@ -334,8 +335,7 @@ class autofs extends plugin{
         $datas = substr( $key, 17);
         list( $mapName, $path) = explode( '___', $datas, 2 );
         $mapName = 'auto.' . $mapName;
-        $rep = new mRep( $path, '', '', '',
-                        $this->config, $this->_getOu( ), $mapName);
+        $rep = $this->_get_mrep( $path, '', '', '', $mapName);
         $rep->fetch( );
         $this->action->message( "Retrieving datas");
         $this->action->message( "rep : $rep->server");
