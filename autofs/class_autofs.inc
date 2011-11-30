@@ -43,102 +43,24 @@ class autofs extends plugin{
     $this->config= $config;
     $this->retrieveMountPoints();
   }
+
   public function save_object( ){
     /*
      * Handle POST AND GET methods
      */
     $this->action = new StateMachine( );
     if ( isset( $_POST['_autofs_add_form_mpoint_posted'] ) ){
-      $this->action->setAction( 'add_mpoint' );
-      $name = trim(get_post('autofs_mountname'));
-      if ( $this->_getPointFromName( $name ) == null){
-        $point = trim(get_post('autofs_mountpoint'));
-        $nisMapEntry = 'auto.' . $name;
-
-        $this->newMountPoint = new mountPoint($point,
-          $nisMapEntry,
-          $this->config,
-          $this->_getOu()
-        );
-      }
+      $this->_add_mpoint();
     } elseif (isset($_POST['_autofs_del_mpoint_posted'] ) ){
-      $this->action->setAction( 'del_mpoint' );
-      $name = "auto." . trim(get_post('autofs_mountname'));
-      $point = $this->_getPointFromName($name);
-      if ( $point != null ) {
-      $this->rmMountPoint = new mountPoint($point,
-                                           $name,
-                                           $this->config,
-                                           $this->_getOu()
-                                         );
-      }
+      $this->_del_mpoint();
     } elseif ( isset( $_POST['_autofs_edit_form_mpoint_posted'] ) ){
-      $this->action->setAction( 'edit_mpoint' );
-      $name = "auto." . trim(get_post( 'autofs_mountname' ));
-      $point = $this->_getPointFromName( $name );
-      $newPoint = trim(get_post( 'autofs_mountpoint' ));
-      if ( ( $point != $newPoint )&&( $newPoint != '' )){
-        $this->newPoint = $newPoint;
-        $this->editMountPoint = new mountPoint($point,
-          $name,
-          $this->config,
-          $this->_getOu());
-      }
+      $this->_edit_mpoint();
     } elseif (  isset(  $_POST['_autofs_add_form_rep_posted'])){
-      $this->action->setAction( 'add_rep' );
-      $mapName = "auto." . trim(get_post( 'autofs_mapname' ));
-      $path = trim(get_post( 'autofs_rep_path' ));
-      $server = trim(get_post( 'autofs_rep_server' ));
-      $remote_path = trim(get_post( 'autofs_rep_remote_path' ));
-      $options = trim(get_post( 'autofs_rep_options' ));
-      $this->action->message( "Map name : $mapName" );
-      foreach ( $_POST as $key=>$item ){
-        $this->action->message(  $key."->".$item);
-      }
-      $this->newRep = new mRep( $path,
-                               $server,
-                               $remote_path,
-                               $options,
-                               $this->config,
-                               $this->_getOu( ),
-                               $mapName
-                              );
+      $this->_add_rep();
     }elseif ( isset( $_POST['_autofs_del_form_rep_posted'])){
-      $this->action->setAction( 'del_rep' );
-      $mapName = "auto." . trim(get_post( 'autofs_mapname' ));
-      $path = trim(get_post( 'autofs_rep_path' ));
-      $server = "";
-      $remote_path = "";
-      $options = "";
-      foreach (  $_POST as $key=>$item ){
-        $this->action->message(   $key."->".$item);
-      }
-      $this->delRep = new mRep( $path,
-                               $server,
-                               $remote_path,
-                               $options,
-                               $this->config,
-                               $this->_getOu( ),
-                               $mapName
-                              );
+      $this->_del_rep();
     }elseif (  isset(  $_POST['_autofs_edit_form_rep_posted'] ) ){
-      $this->action->setAction(  'edit_rep' );
-      $mapName = trim(get_post(  'autofs_mapname' ));
-      $origPath = trim(get_post(  'autofs_orig_rep_path' ));
-      $path = trim(get_post(  'autofs_rep_path' ));
-      $server = trim(get_post( 'autofs_rep_server'));
-      $remote_path = trim(get_post( 'autofs_rep_remote_path'));
-      $options = trim(get_post(  'autofs_rep_options'));
-
-      $this->editRep = new mRep( $origPath,
-                          "",
-                          "",
-                          "",
-                          $this->config,
-                          $this->_getOu(  ),
-                          $mapName);
-      $this->newRepInfos = array( $path, $server, $remote_path, $options );
-      $this->action->message( $origPath . "=>" . $path);
+      $this->_edit_rep();
     }
 
     if (isset($this->newMountPoint)){
@@ -173,6 +95,109 @@ class autofs extends plugin{
       $this->newRepInfos = null;
       $this->retrieveMountPoints(  );
     }
+  }
+
+  protected function _add_mpoint(){
+      $this->action->setAction( 'add_mpoint' );
+      $name = trim(get_post('autofs_mountname'));
+      if ( $this->_getPointFromName( $name ) == null){
+        $point = trim(get_post('autofs_mountpoint'));
+        $nisMapEntry = 'auto.' . $name;
+
+        $this->newMountPoint = new mountPoint($point,
+          $nisMapEntry,
+          $this->config,
+          $this->_getOu()
+        );
+      }
+  }
+
+  protected function _del_mpoint(){
+      $this->action->setAction( 'del_mpoint' );
+      $name = "auto." . trim(get_post('autofs_mountname'));
+      $point = $this->_getPointFromName($name);
+      if ( $point != null ) {
+      $this->rmMountPoint = new mountPoint($point,
+                                           $name,
+                                           $this->config,
+                                           $this->_getOu()
+                                         );
+      }
+  }
+
+  protected function _edit_mpoint(){
+      $this->action->setAction( 'edit_mpoint' );
+      $name = "auto." . trim(get_post( 'autofs_mountname' ));
+      $point = $this->_getPointFromName( $name );
+      $newPoint = trim(get_post( 'autofs_mountpoint' ));
+      if ( ( $point != $newPoint )&&( $newPoint != '' )){
+        $this->newPoint = $newPoint;
+        $this->editMountPoint = new mountPoint($point,
+          $name,
+          $this->config,
+          $this->_getOu());
+      }
+  }
+
+  protected function _add_rep(){
+      $this->action->setAction( 'add_rep' );
+      $mapName = "auto." . trim(get_post( 'autofs_mapname' ));
+      $path = trim(get_post( 'autofs_rep_path' ));
+      $server = trim(get_post( 'autofs_rep_server' ));
+      $remote_path = trim(get_post( 'autofs_rep_remote_path' ));
+      $options = trim(get_post( 'autofs_rep_options' ));
+      $this->action->message( "Map name : $mapName" );
+      foreach ( $_POST as $key=>$item ){
+        $this->action->message(  $key."->".$item);
+      }
+      $this->newRep = new mRep( $path,
+                               $server,
+                               $remote_path,
+                               $options,
+                               $this->config,
+                               $this->_getOu( ),
+                               $mapName
+                              );
+  }
+
+  protected function _del_rep(){
+      $this->action->setAction( 'del_rep' );
+      $mapName = "auto." . trim(get_post( 'autofs_mapname' ));
+      $path = trim(get_post( 'autofs_rep_path' ));
+      $server = "";
+      $remote_path = "";
+      $options = "";
+      foreach (  $_POST as $key=>$item ){
+        $this->action->message(   $key."->".$item);
+      }
+      $this->delRep = new mRep( $path,
+                               $server,
+                               $remote_path,
+                               $options,
+                               $this->config,
+                               $this->_getOu( ),
+                               $mapName
+                              );
+  }
+
+  protected function _edit_rep(){
+      $this->action->setAction(  'edit_rep' );
+      $mapName = trim(get_post(  'autofs_mapname' ));
+      $origPath = trim(get_post(  'autofs_orig_rep_path' ));
+      $path = trim(get_post(  'autofs_rep_path' ));
+      $server = trim(get_post( 'autofs_rep_server'));
+      $remote_path = trim(get_post( 'autofs_rep_remote_path'));
+      $options = trim(get_post(  'autofs_rep_options'));
+
+      $this->editRep = new mRep( $origPath,
+                          "",
+                          "",
+                          "",
+                          $this->config,
+                          $this->_getOu(  ),
+                          $mapName);
+      $this->newRepInfos = array( $path, $server, $remote_path, $options );
+      $this->action->message( $origPath . "=>" . $path);
   }
 
   public function execute () {
