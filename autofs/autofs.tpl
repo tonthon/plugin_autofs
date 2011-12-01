@@ -1,20 +1,29 @@
 <style>
 {literal}
+.round{
+    -moz-border-radius:4px;
+    border-radius:4px;
+}
+.drop-shadow {
+    -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 60px rgba(0, 0, 0, 0.1) inset;
+    -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+     box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+
+}
+.mpoint{
+    padding:5px;
+    margin:5px;
+    border:1px solid #888;
+    display:block;
+}
 .mountrep{
     padding:5px;
     margin:5px;
-    border:1px solid #555;
     display:inline-block;
 }
-.mpoint{
-    border-bottom:1px solid #666;
-    padding:5px;
-    display: inline;
-    margin:5px;
-    -moz-box-shadow: 5px 5px 5px #ccc;
-    -webkit-box-shadow: 5px 5px 5px #ccc;
-    box-shadow: 5px 5px 5px #ccc;
-
+.mpoint img{
+    margin-right:5px;
+    display:block;
 }
 {/literal}
 </style>
@@ -24,26 +33,33 @@
 </p>
 {section name=mountlist loop=$mountPoints}
 {assign var=mountpoint value=$mountPoints[mountlist]}
-<div class='mpoint'>
+<span class='mpoint round'>
+<table cellpadding='0' cellspacing='0'><tr><td>
 <h2>{$mountpoint->name} ( {$mountpoint->point} )</h2>
-<input class="center" type="image" style="padding:1px" name="autofs_mpoint_rm_{$mountpoint->name}" title="Remove mountpoint" src="images/lists/trash.png">
-<br />
+<img src='images/drive.jpg' />
+<input type='submit' name='autofs_edit_form_mpoint_{$mountpoint->name}' value='Edit' />
+<input type='submit' name='autofs_del_mpoint_{$mountpoint->name}' value='Remove' />
+</td><td>
 {section name=replist loop=$mountpoint->mreps}
 {assign var=mountrep value=$mountpoint->mreps[replist]}
-<span class='mountrep'>
-<b>Chemin à monter : </b>{$mountrep->path}  <br /><br />
+<span class='mountrep drop-shadow round'>
+<table><tr><td>
+<img src='images/folder.jpg' />
+</td><td>
+<b>Local path : </b>{$mountrep->path}  <br /><br />
 <b>Server : </b>{$mountrep->server}<br />
 <b>Remote rep : </b>{$mountrep->remote_path}<br />
 <b>Mount options : </b>{$mountrep->options}<br />
 <input type='submit' name='autofs_edit_mrep_{$mountpoint->name}___{$mountrep->id}' value='Edit'/>
 <input type='submit' name='autofs_del_mrep_{$mountpoint->name}___{$mountrep->id}' value='Remove'/>
+</td></tr></table>
 </span>
 {/section}
-</div>
-<input type='submit' name='autofs_edit_form_mpoint_{$mountpoint->name}' value='Edit' />
-<input type='submit' name='autofs_del_mpoint_{$mountpoint->name}' value='Remove' />
-<input type='submit' name='autofs_add_mrep_{$mountpoint->name}' value='Add a directory'
+<input type='submit' name='autofs_add_mrep_{$mountpoint->name}' value='Add a directory' />
+</td></tr></table>
+</span>
 {/section}
+<br />
 <br />
 <input type='submit' name='autofs_add_form_mpoint' value='Add a new mountpoint' />
 <div>
