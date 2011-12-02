@@ -35,7 +35,7 @@ fieldset{
 <img src='images/drive.png' alt='drive'/>
 </td><td style='text-align:right'>
 <fieldset class='round'>
-<label for='autofs_mountname'>Nom du point de montage</label>
+<label for='autofs_mountname'>Name ( name of the associated ldap branch )</label>
 {if isset(  $mpointname)}
 <input type='text' name='disablefield' value='{$mpointname}' disabled='true' />
 <input type='hidden' name='autofs_mountname' value='{$mpointname}' />
@@ -44,7 +44,7 @@ fieldset{
 {/if}
 <br />
 <br />
-<label for='autofs_mountpoint'>Chemin de destination</label>
+<label for='autofs_mountpoint'>Destination path (the path it will be mounted on)</label>
 <input type='text' name='autofs_mountpoint' {if isset($mpoint)}value='{$mpoint}'{/if} />
 </fieldset>
 </td></tr><tr><td></td><td style='text-align:right'>
