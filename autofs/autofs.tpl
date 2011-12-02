@@ -61,7 +61,13 @@ background-color:#e5Ebf0;
 </td></tr></table>
 </span>
 {/section}
+<span class='mountrep drop-shadow round'>
+<table><tr><td>
+<img src='images/folder-plus.png' />
+</td><td>
 <input type='submit' name='autofs_add_mrep_{$mountpoint->name}' value='Add a directory' />
+</td></tr></table>
+</span>
 </td></tr></table>
 </span>
 {/section}
