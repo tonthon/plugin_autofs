@@ -31,7 +31,16 @@ This plugin requires the following ldap schema::
 
 It is available in the `rfc2307bis.schema <http://tools.ietf.org/id/draft-howard-rfc2307bis-00.txt>`_
 
-TODO: say how to install.
+Install
+-------
+
+Paste the autofs directory into fusiondirectory/plugins/addons/.
+Paste the content of the images directory in fusiondirectory/html/images/.
+
+Add the following line to the Addons section in fusiondirectory's main config file (/etc/fusiondirectory/fusiondirectory.conf):
+    
+    <plugin acl="autofs" class="autofs" />
+
 
 
 How to proceed
