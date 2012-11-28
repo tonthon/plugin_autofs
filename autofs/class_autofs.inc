@@ -467,4 +467,21 @@ class autofs extends plugin{
   #    return true;
   #  }
 }
+  /* Return plugin informations for acl handling  */
+static function plInfo()
+{
+	return array(
+			"plShortName"   => _("Autofs"),
+			"plDescription" => _("Autofs manager"),
+			"plIcon"        => "plugins/autofs/images/plugin.png",
+			"plSelfModify"  => TRUE,
+			"plCategory"    => array("users"),
+			"plObjectType"  => array("users"),
+			"plSection"     => "addons",
+			"plPriority"    => 2,
+			"plProvidedAcls"  => array()
+		    );
+}
+
+
 ?>
