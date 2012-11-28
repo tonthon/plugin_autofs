@@ -1,8 +1,8 @@
 <?php
 /*
- * This file is part of the autofs plugin for fusiondirectory 
+ * This file is part of the autofs plugin for fusiondirectory
  * Copyright (C) 2011 Gaston TJEBBES - Majerti <g.t at majerti.fr>
- *  
+ *
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -51,6 +51,17 @@ class autofs extends plugin{
   var $description = "This plugin provides a ldap map for nfs-autofs
     integration";
 
+  /* Return plugin informations for acl handling  */
+  static function plInfo()
+  {
+	  return array(
+		  "plShortName"   => _("Autofs"),
+		  "plDescription" => _("Autofs manager"),
+		  "plSection"     => "addons",
+		  "plPriority"    => 5,
+		  "plProvidedAcls"  => array()
+		  );
+  }
   public function __construct ( &$config, $dn = null ) {
     /*
      * Constructor
@@ -466,17 +477,6 @@ class autofs extends plugin{
   #  static function validPath( $path ){
   #    return true;
   #  }
-}
-  /* Return plugin informations for acl handling  */
-static function plInfo()
-{
-	return array(
-			"plShortName"   => _("Autofs"),
-			"plDescription" => _("Autofs manager"),
-			"plSection"     => "addons",
-			"plPriority"    => 5,
-			"plProvidedAcls"  => array()
-		    );
 }
 
 
