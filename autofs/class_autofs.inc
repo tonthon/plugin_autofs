@@ -473,12 +473,8 @@ static function plInfo()
 	return array(
 			"plShortName"   => _("Autofs"),
 			"plDescription" => _("Autofs manager"),
-			"plIcon"        => "plugins/autofs/images/plugin.png",
-			"plSelfModify"  => TRUE,
-			"plCategory"    => array("users"),
-			"plObjectType"  => array("users"),
 			"plSection"     => "addons",
-			"plPriority"    => 2,
+			"plPriority"    => 5,
 			"plProvidedAcls"  => array()
 		    );
 }
